@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+      initContainers:
+      - name: init-nginx-deployment-svc
+        image:  busybox
+        command: ['sh', '-c', "until nslookup nginx-deployment-svc.default.svc.cluster.local; do echo wait when service nginx-deployment-svc started; sleep 3; done"]
